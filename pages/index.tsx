@@ -1,42 +1,45 @@
 import Head from 'next/head';
 import { useState } from 'react';
 import styled from 'styled-components';
+import TodoList from '@/components/TodoList/index';
+import TodoItem from '@/components/TodoItem';
 
 type Todo = {
-  id: number;
+  id: string;
   value: string;
   completed: boolean;
 };
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([
-    { id: 1, value: 'test입력값', completed: true },
-    { id: 2, value: 'test입력값2', completed: false },
+    { id: '1', value: 'test입력값', completed: true },
+    { id: '2', value: 'test입력값2', completed: false },
   ]);
 
-  const changeHanlder = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const changeHanlder = (e: React.ChangeEvent) => {
+    // 여기서 completed 변경
+  };
+
   const submitHanlder = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
 
   return (
-    <Wrapper>
-      <h1>Todo</h1>
-      <InputGroup onSubmit={submitHanlder}>
-        <InputText type="text" placeholder="할 일을 입력하세요" maxLength={20} onChange={changeHanlder} />
-        <SubmitBtn type="submit">제출</SubmitBtn>
-      </InputGroup>
-      <div>
-        <TodoList>
-          {todos.length > 0 &&
-            todos.map(({ id, value, completed }: Todo) => (
-              <TodoItem key={id} checked={completed}>
-                <input type="checkbox" checked={completed} /> <label>{value}</label> <DeleteBtn>🗑️</DeleteBtn>
-              </TodoItem>
-            ))}
-        </TodoList>
-      </div>
-    </Wrapper>
+    <>
+      <Head>
+        <title>Todo</title>
+      </Head>
+      <Wrapper>
+        <h1>Todo</h1>
+        <InputGroup onSubmit={submitHanlder}>
+          <InputText type="text" placeholder="할 일을 입력하세요" maxLength={20} onChange={changeHanlder} />
+          <SubmitBtn type="submit">제출</SubmitBtn>
+        </InputGroup>
+        <div>
+          <TodoList todos={todos} onChange={changeHanlder} />
+        </div>
+      </Wrapper>
+    </>
   );
 }
 
@@ -77,38 +80,4 @@ const SubmitBtn = styled.button`
   &:hover {
     background: coral;
   }
-`;
-
-const TodoList = styled.ul`
-  width: 50%;
-  list-style: none;
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 10px;
-`;
-
-const TodoItem = styled.li<{ checked: boolean }>`
-  padding: 8px 16px;
-  border: 1px solid #cdcdcd;
-  border-radius: 4px;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-
-  input[type='checkbox'] {
-    margin-right: 8px;
-  }
-
-  label {
-    width: calc(100% - 40px);
-    text-decoration: ${props => (props.checked ? 'line-through' : 'none')};
-    text-align: left;
-  }
-`;
-
-const DeleteBtn = styled.button`
-  border: 0;
-  background: transparent;
-  cursor: pointer;
 `;
