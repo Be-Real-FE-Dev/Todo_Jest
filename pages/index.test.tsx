@@ -19,16 +19,9 @@ describe('Main Page', () => {
     const submitBtn = getByRole('button', { name: '제출' });
     const todoInput = getByTestId('todo');
 
-    // console.log(todos.childElementCount);
-
     expect(todos.childElementCount).toBe(2);
     userEvent.type(todoInput, '새로 추가');
-    // console.log(todoInput.textContent);
-    // userEvent.click(submitBtn);
     fireEvent.click(submitBtn);
-    // expect(todoInput).toHaveValue('새로 추가');
-    expect(todos.childElementCount).toBe(2);
     expect(todos.childElementCount).toBe(3);
-    // expect(todos).toHaveLength(2);
   });
 });
