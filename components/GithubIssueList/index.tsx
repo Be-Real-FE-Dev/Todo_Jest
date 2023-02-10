@@ -1,7 +1,6 @@
 import React from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { getIssueList } from 'api/Issue';
-import { log } from 'console';
 
 function GithubIssueList() {
   const { isLoading, error, data, isFetching } = useQuery('issueList', getIssueList);

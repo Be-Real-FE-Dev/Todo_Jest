@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import Home from '@/pages/TodoLIst/index';
+import Home from '@/pages/TodoList/index';
 import userEvent from '@testing-library/user-event';
 
 describe('Main Page', () => {

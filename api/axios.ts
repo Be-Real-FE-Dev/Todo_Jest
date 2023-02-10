@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const instance = axios.create({
+const whatSsubInstance = axios.create({
   baseURL: 'https://api.github.com/repos/harseille/WhatSsub',
   timeout: 30000,
   headers: {
@@ -8,7 +8,15 @@ const instance = axios.create({
   },
 });
 
-instance.interceptors.response.use(
+const todoInstance = axios.create({
+  baseURL: '',
+  timeout: 30000,
+  headers: {
+    'Content-type': 'application/json',
+  },
+});
+
+whatSsubInstance.interceptors.response.use(
   response => response,
   error => {
     if (error.response) {
@@ -26,4 +34,4 @@ instance.interceptors.response.use(
   }
 );
 
-export default instance;
+export { whatSsubInstance, todoInstance };

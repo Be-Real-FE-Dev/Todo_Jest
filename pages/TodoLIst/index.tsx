@@ -3,34 +3,49 @@ import { ChangeEvent, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TodoList from '@/components/TodoList/index';
 import TodoItem from '@/components/TodoItem';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { addTodo, fetchTodo } from 'api/Todo';
+import axios from 'axios';
+import { log } from 'console';
 
-type Todo = {
+interface Todo {
   id: string;
   value: string;
   completed: boolean;
-};
+}
 
 export default function Home() {
   const [todo, setTodo] = useState('');
-  const [todos, setTodos] = useState<Todo[]>([
-    { id: '1', value: 'test입력값', completed: true },
-    { id: '2', value: 'test입력값2', completed: false },
-  ]);
+  const queryClient = useQueryClient();
 
-  const getTodos = (): Promise<Todo[]> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        return resolve([
-          { id: '1', value: 'test입력값', completed: true },
-          { id: '2', value: 'test입력값2', completed: false },
-        ]);
-      }, 1000);
-    });
-  };
+  const {
+    data: fetchedTodos,
+    isLoading: isLoadingfetchedTodos,
+    isFetching,
+    refetch,
+  } = useQuery('todo', fetchTodo, { refetchOnMount: 'always' });
 
-  // useEffect(() => {
-  //   getTodos().then(data => setTodos(data));
-  // }, []);
+  const { mutate, isLoading, isError, error, isSuccess } = useMutation('addTodo', addTodo, {
+    // onMutate: async (newTodo: Todo) => {
+    //   console.log(123123123, newTodo);
+    //   const test = await queryClient.cancelQueries('todo');
+    //   console.log(test);
+    //   // Snapshot the previous value
+    //   const previousTodos = queryClient.getQueryData('todo');
+
+    //   console.log(previousTodos);
+
+    //   // Optimistically update to the new value
+    //   queryClient.setQueryData('todo', () => [...previousTodos.data.result, newTodo]);
+
+    //   // Return a context object with the snapshotted value
+    //   return { previousTodos };
+    // },
+    onSuccess: () => {
+      // refetch();
+      queryClient.invalidateQueries('todo');
+    },
+  });
 
   const changeHanlder = (e: React.ChangeEvent) => {
     const { value } = e.target as HTMLInputElement;
@@ -40,13 +55,17 @@ export default function Home() {
   const updateHanlder = (e: ChangeEvent) => {
     const { id } = e.target as HTMLInputElement;
 
-    setTodos(prev => prev.map(todo => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
+    // setTodos(prev => prev.map(todo => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
   };
 
   const submitHanlder = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setTodos([{ id: Math.random().toString(), value: todo, completed: false }, ...todos]);
+    mutate({ id: Math.random().toString(), value: todo, completed: false });
   };
+
+  console.log(fetchedTodos?.data.result);
+
+  if (isFetching && !fetchedTodos?.data.result) return <div> ...loading</div>;
 
   return (
     <>
@@ -67,7 +86,8 @@ export default function Home() {
           <SubmitBtn type="submit">제출</SubmitBtn>
         </InputGroup>
         <div>
-          <TodoList todos={todos} onChange={updateHanlder} />
+          {isFetching && <div> ...loading</div>}
+          <TodoList todos={fetchedTodos?.data.result} onChange={() => {}} />
         </div>
       </Wrapper>
     </>
