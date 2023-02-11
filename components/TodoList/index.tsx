@@ -29,7 +29,7 @@ export default TodoList;
 const List = styled.ul`
   width: 50%;
   list-style: none;
-  display: flex;
   flex-flow: column nowrap;
+  display: flex;
   gap: 10px;
 `;
